@@ -511,11 +511,9 @@
                 <p style="font-size: 1.2em; line-height: 1.8;">While循环就像一个<strong>勤劳的小机器人</strong>🤖，只要条件满足，它就会一直重复做同样的事情！</p>
             </div>
 
-            <div class="code-block">
-<span class="keyword">while</span> (条件) {
+            <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">while</span> (条件) {
     <span class="comment">// 重复执行的代码</span>
-}
-            </div>
+}</pre></div>
 
             <div class="animation-demo">
                 <h3 style="color: var(--primary); margin-bottom: 20px;">循环动画演示</h3>
@@ -577,14 +575,12 @@
 
             <div class="bug-hunt-item">
                 <h3 style="color: var(--primary);">Bug 1: 神秘的分号 <span class="challenge-badge">⭐ 简单</span></h3>
-                <div class="code-block">
-<span class="keyword">int</span> i = <span class="number">0</span>;
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">0</span>;
 <span class="keyword">while</span> (i < <span class="number">5</span>);<span class="comment">  // ← 这里有问题吗？</span>
 {
     cout << i << <span class="string">" "</span>;
     i++;
-}
-                </div>
+}</pre></div>
                 <button class="interactive-btn" onclick="showHint(1)" style="margin-top: 15px;">💡 需要提示？</button>
                 <div class="hint-box" id="hint1" style="display: none;">
                     <div><strong>🔍 提示：</strong> 仔细看while后面的分号...</div>
@@ -597,13 +593,11 @@
 
             <div class="bug-hunt-item">
                 <h3 style="color: var(--primary);">Bug 2: 永不停歇的循环 <span class="challenge-badge">⭐ 简单</span></h3>
-                <div class="code-block">
-<span class="keyword">int</span> count = <span class="number">1</span>;
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> count = <span class="number">1</span>;
 <span class="keyword">while</span> (count <= <span class="number">10</span>) {
     cout << <span class="string">"数字: "</span> << count << endl;
     <span class="comment">// 哎呀，好像少了什么...</span>
-}
-                </div>
+}</pre></div>
                 <button class="interactive-btn" onclick="showHint(2)" style="margin-top: 15px;">💡 需要提示？</button>
                 <div class="hint-box" id="hint2" style="display: none;">
                     <div><strong>🔍 提示：</strong> 循环三要素：初始化、条件、更新...</div>
@@ -616,13 +610,11 @@
 
             <div class="bug-hunt-item">
                 <h3 style="color: var(--primary);">Bug 3: 奇怪的比较 <span class="challenge-badge">⭐⭐ 中等</span></h3>
-                <div class="code-block">
-<span class="keyword">int</span> num = <span class="number">5</span>;
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> num = <span class="number">5</span>;
 <span class="keyword">while</span> (num = <span class="number">10</span>) {<span class="comment">  // ← 这样对吗？</span>
     cout << num << endl;
     num++;
-}
-                </div>
+}</pre></div>
                 <button class="interactive-btn" onclick="showHint(3)" style="margin-top: 15px;">💡 需要提示？</button>
                 <div class="hint-box" id="hint3" style="display: none;">
                     <div><strong>🔍 提示：</strong> 赋值 = 和 比较 == 的区别...</div>
@@ -640,25 +632,21 @@
 
             <div class="bug-hunt-item">
                 <h3 style="color: var(--primary);">Bug 4: 变量作用域陷阱 <span class="challenge-badge">⭐⭐⭐ 挑战</span></h3>
-                <div class="code-block">
-<span class="keyword">while</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">5</span>) {<span class="comment">  // ← 这样写可以吗？</span>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">while</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">5</span>) {<span class="comment">  // ← 这样写可以吗？</span>
     cout << i << endl;
     i++;
-}
-                </div>
+}</pre></div>
                 <button class="interactive-btn" onclick="showHint(4)" style="margin-top: 15px;">💡 需要提示？</button>
                 <div class="hint-box" id="hint4" style="display: none;">
                     <div><strong>🔍 提示：</strong> while循环的条件部分和for循环不一样...</div>
                     <div class="hint-content" id="hintContent4">
                         <strong>🐛 Bug原因：</strong>while循环的条件部分不能声明变量！这是for循环的语法。<br>
                         <strong>💊 修复方法：</strong>
-                        <div class="code-block" style="margin-top: 10px;">
-<span class="keyword">int</span> i = <span class="number">0</span>;  <span class="comment">// 在循环前声明</span>
+                        <div class="code-block" style="margin-top: 10px;"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">0</span>;  <span class="comment">// 在循环前声明</span>
 <span class="keyword">while</span> (i < <span class="number">5</span>) {
     cout << i << endl;
     i++;
-}
-                        </div>
+}</pre></div>
                         <strong>🎓 区别：</strong>
                         <ul style="margin-top: 10px;">
                             <li><strong>for循环：</strong>for (int i = 0; i < 5; i++) ✅</li>
@@ -689,15 +677,13 @@
 
             <div class="quiz-card">
                 <div class="quiz-question">🎮 谜题1: 这段代码想做什么？</div>
-                <div class="code-block">
-<span class="keyword">int</span> sum = <span class="number">0</span>;
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> sum = <span class="number">0</span>;
 <span class="keyword">int</span> i = <span class="number">1</span>;
 <span class="keyword">while</span> (i <= <span class="number">100</span>) {
     sum = sum + i;
     i++;
 }
-cout << <span class="string">"结果: "</span> << sum;
-                </div>
+cout << <span class="string">"结果: "</span> << sum;</pre></div>
                 <div class="quiz-options">
                     <button class="option-btn" onclick="checkQuiz(event, false, 1)">
                         A. 输出1到100的所有数字
@@ -725,22 +711,18 @@ cout << <span class="string">"结果: "</span> << sum;
             <div class="quiz-card">
                 <div class="quiz-question">🎮 谜题2: 下面哪个代码能输出 "1 2 4 8 16"？</div>
                 <div class="grid-2">
-                    <div class="code-block">
-<span class="comment">// 选项A</span>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 选项A</span>
 <span class="keyword">int</span> n = <span class="number">1</span>;
 <span class="keyword">while</span> (n < <span class="number">20</span>) {
     cout << n << <span class="string">" "</span>;
     n = n + n;
-}
-                    </div>
-                    <div class="code-block">
-<span class="comment">// 选项B</span>
+}</pre></div>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 选项B</span>
 <span class="keyword">int</span> n = <span class="number">1</span>;
 <span class="keyword">while</span> (n < <span class="number">20</span>) {
     cout << n << <span class="string">" "</span>;
     n = n * <span class="number">2</span>;
-}
-                    </div>
+}</pre></div>
                 </div>
                 <div class="quiz-options">
                     <button class="option-btn" onclick="checkQuiz(event, false, 2)">
@@ -774,15 +756,13 @@ cout << <span class="string">"结果: "</span> << sum;
 
             <div class="quiz-card">
                 <div class="quiz-question">🎮 谜题3: 猜猜这段代码的输出？<span class="challenge-badge">⭐⭐ 中等</span></div>
-                <div class="code-block">
-<span class="keyword">int</span> a = <span class="number">5</span>, b = <span class="number">10</span>;
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> a = <span class="number">5</span>, b = <span class="number">10</span>;
 <span class="keyword">while</span> (a < b) {
     cout << a << <span class="string">"-"</span>;
     a = a + <span class="number">2</span>;
     b = b - <span class="number">1</span>;
 }
-cout << <span class="string">"结束"</span>;
-                </div>
+cout << <span class="string">"结束"</span>;</pre></div>
                 <div class="quiz-options">
                     <button class="option-btn" onclick="checkQuiz(event, false, 3)">
                         A. 5-7-9-结束
@@ -902,15 +882,13 @@ cout << <span class="string">"结束"</span>;
                             <li>5. 判断猜的数字是太大还是太小，给出提示</li>
                             <li>6. 猜对了自动退出循环，输出祝贺信息</li>
                         </ul>
-                        <div class="code-block" style="margin-top: 15px;">
-<span class="keyword">int</span> answer = <span class="number">42</span>;
+                        <div class="code-block" style="margin-top: 15px;"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> answer = <span class="number">42</span>;
 <span class="keyword">int</span> guess = <span class="number">0</span>;  <span class="comment">// 初始值设为不等于answer</span>
 <span class="keyword">while</span> (guess != answer) {
     cout << <span class="string">"请猜一个数字(1-100): "</span>;
     cin >> guess;
     <span class="comment">// 你的判断代码...</span>
-}
-                        </div>
+}</pre></div>
                     </div>
                 </div>
                 <div class="input-area">
@@ -935,13 +913,11 @@ cout << <span class="string">"结束"</span>;
                 <p style="font-size: 1.1em; margin: 15px 0; color: white;">
                     <strong>期望输出格式：</strong>
                 </p>
-                <div class="code-block" style="background: white; color: #333;">
-1*1=1
+                <div class="code-block" style="background: white; color: #333;"><pre style="margin: 0; font-family: inherit;">1*1=1
 2*1=2  2*2=4
 3*1=3  3*2=6  3*3=9
 4*1=4  4*2=8  4*3=12  4*4=16
-...
-                </div>
+...</pre></div>
             </div>
 
             <div class="hint-box" onclick="toggleHintContent('hint7')" style="margin-top: 20px;">
@@ -955,8 +931,7 @@ cout << <span class="string">"结束"</span>;
                     </ol>
                     
                     <strong>📝 示例框架：</strong>
-                    <div class="code-block" style="margin-top: 15px;">
-<span class="keyword">int</span> i = <span class="number">1</span>;  <span class="comment">// 外层循环：行</span>
+                    <div class="code-block" style="margin-top: 15px;"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">1</span>;  <span class="comment">// 外层循环：行</span>
 <span class="keyword">while</span> (i <= <span class="number">9</span>) {
     <span class="keyword">int</span> j = <span class="number">1</span>;  <span class="comment">// 内层循环：列</span>
     <span class="keyword">while</span> (j <= i) {  <span class="comment">// 注意这里！第i行打印i个数</span>
@@ -965,8 +940,7 @@ cout << <span class="string">"结束"</span>;
     }
     cout << endl;  <span class="comment">// 换行</span>
     i++;
-}
-                    </div>
+}</pre></div>
                     
                     <strong>🔍 理解嵌套循环：</strong>
                     <ul style="margin-top: 10px; line-height: 1.8;">
