@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ While循环进阶 - 第二课 🎯</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00D4FF;
+            --secondary: #7B2FFF;
+            --accent: #FF3366;
+            --success: #00E676;
+            --warning: #FFB300;
+            --dark: #0A0E27;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0A0E27 0%, #1A1F3A 50%, #2D1B69 100%);
+            background-attachment: fixed;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #8B9DC3;
+            margin-bottom: 15px;
+        }
+
+        .lesson-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.4);
+        }
+
+        /* 导航 */
+        .nav-pills {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .nav-pill {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-pill:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-pill.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.6);
+        }
+
+        /* 章节 */
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 50px;
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2.8em;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--primary), white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 代码块 */
+        .code-block {
+            background: #0D1117;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1em;
+            line-height: 1.8;
+            position: relative;
+            overflow-x: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .code-block::before {
+            content: 'C++';
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: var(--primary);
+            color: var(--dark);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+        }
+
+        .keyword { color: #FF79C6; font-weight: 600; }
+        .string { color: #F1FA8C; }
+        .comment { color: #6272A4; font-style: italic; }
+        .number { color: #BD93F9; }
+        .function { color: #50FA7B; }
+        .operator { color: #FF79C6; }
+
+        /* 卡片 */
+        .card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 47, 255, 0.1));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.3);
+            border-color: var(--primary);
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* 选择题 */
+        .quiz-card {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.15), rgba(123, 47, 255, 0.15));
+            border: 2px solid rgba(255, 51, 102, 0.4);
+            border-radius: 20px;
+            padding: 35px;
+            margin: 30px 0;
+        }
+
+        .quiz-question {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            color: white;
+            padding: 18px 25px;
+            border-radius: 12px;
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.3), rgba(0, 230, 118, 0.1));
+            border-color: var(--success);
+            animation: pulse 0.5s;
+        }
+
+        .option-btn.wrong {
+            background: rgba(255, 51, 102, 0.2);
+            border-color: var(--accent);
+            animation: shake 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* 解释框 */
+        .explanation {
+            background: rgba(0, 230, 118, 0.1);
+            border-left: 5px solid var(--success);
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            line-height: 1.8;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 对比卡片 */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .compare-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .compare-card:hover {
+            transform: scale(1.03);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .compare-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* 提示框 */
+        .hint-box {
+            background: rgba(255, 179, 0, 0.15);
+            border: 2px solid var(--warning);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .hint-box:hover {
+            background: rgba(255, 179, 0, 0.25);
+            transform: scale(1.02);
+        }
+
+        .hint-content {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed var(--warning);
+        }
+
+        .hint-content.show {
+            display: block;
+        }
+
+        /* 交互按钮 */
+        .interactive-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .interactive-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.6);
+        }
+
+        /* 高亮区域 */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(123, 47, 255, 0.2));
+            border-left: 5px solid var(--accent);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            font-size: 1.15em;
+            line-height: 1.8;
+        }
+
+        /* 进度条 */
+        .progress-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            min-width: 150px;
+            z-index: 1000;
+        }
+
+        .score-number {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .score-label {
+            text-align: center;
+            color: #8B9DC3;
+            margin-top: 5px;
+        }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        tr:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* 动画演示区 */
+        .demo-area {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .demo-output {
+            background: #0D1117;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            min-height: 100px;
+            color: var(--success);
+        }
+
+        /* 徽章 */
+        .badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .badge-easy {
+            background: linear-gradient(135deg, #00E676, #00C853);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+        }
+
+        .badge-medium {
+            background: linear-gradient(135deg, #FFB300, #FF6F00);
+            box-shadow: 0 4px 15px rgba(255, 179, 0, 0.4);
+        }
+
+        .badge-hard {
+            background: linear-gradient(135deg, #FF3366, #D50000);
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            .section { padding: 30px 20px; }
+            .nav-pill { padding: 12px 20px; font-size: 1em; }
+            .progress-container { top: 10px; right: 10px; padding: 15px; min-width: 120px; }
+            .compare-grid { grid-template-columns: 1fr; }
+        }
+
+        .emoji-large {
+            font-size: 4em;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            line-height: 2;
+        }
+
+        strong {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="score-number" id="score">0</div>
+        <div class="score-label">⭐ 积分</div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>🎯 While循环进阶课</h1>
+            <p class="subtitle">掌握循环的高级用法和常见模式</p>
+            <div class="lesson-badge">第2课 - 进阶篇</div>
+        </header>
+
+        <div class="nav-pills">
+            <button class="nav-pill active" onclick="showSection(0)">🔄 While循环模式</button>
+            <button class="nav-pill" onclick="showSection(1)">⚡ Break与Continue</button>
+            <button class="nav-pill" onclick="showSection(2)">🔁 嵌套循环</button>
+            <button class="nav-pill" onclick="showSection(3)">🎮 经典算法</button>
+            <button class="nav-pill" onclick="showSection(4)">🧪 综合练习</button>
+        </div>
+
+        <!-- 第1节：While循环常见模式 -->
+        <div class="section active" id="section0">
+            <h2 class="section-title">🔄 While循环的常见模式</h2>
+            
+            <div class="emoji-large">📚</div>
+
+            <div class="card">
+                <h3 class="card-title">模式1：计数循环</h3>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">最常见的循环模式，用于执行固定次数的操作</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 打印1到10的数字</span>
+<span class="keyword">int</span> i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">10</span>) {
+    cout << i << <span class="string">" "</span>;
+    i++;  <span class="comment">// 每次加1</span>
+}
+<span class="comment">// 输出: 1 2 3 4 5 6 7 8 9 10</span></pre></div>
+                <div class="highlight-box">
+                    💡 <strong>关键点：</strong>
+                    <ul>
+                        <li>初始化计数器（i = 1）</li>
+                        <li>设定结束条件（i <= 10）</li>
+                        <li>每次更新计数器（i++）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">模式2：求和累加</h3>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">用于计算一系列数字的总和</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 计算1到100的和</span>
+<span class="keyword">int</span> sum = <span class="number">0</span>;  <span class="comment">// 累加器初始化为0</span>
+<span class="keyword">int</span> i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">100</span>) {
+    sum = sum + i;  <span class="comment">// 或写成 sum += i;</span>
+    i++;
+}
+cout << <span class="string">"总和: "</span> << sum;  <span class="comment">// 输出: 5050</span></pre></div>
+                <div class="highlight-box">
+                    💡 <strong>记忆技巧：</strong>sum（总和）变量要先初始化为0，就像一个空口袋，每次往里放东西！
+                </div>
+            </div>
+
+            <div class="quiz-card">
+                <div class="quiz-question">🤔 问题1：下面哪个代码能正确计算1到50的所有偶数之和？</div>
+                <div class="compare-grid" style="margin: 25px 0;">
+                    <div class="compare-card">
+                        <div class="compare-title">代码A</div>
+                        <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> sum = <span class="number">0</span>, i = <span class="number">2</span>;
+<span class="keyword">while</span> (i <= <span class="number">50</span>) {
+    sum += i;
+    i += <span class="number">2</span>;
+}</pre></div>
+                    </div>
+                    <div class="compare-card">
+                        <div class="compare-title">代码B</div>
+                        <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> sum = <span class="number">0</span>, i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">50</span>) {
+    <span class="keyword">if</span> (i % <span class="number">2</span> == <span class="number">0</span>)
+        sum += i;
+    i++;
+}</pre></div>
+                    </div>
+                </div>
+                <div class="quiz-options">
+                    <button class="option-btn" onclick="checkQuiz(event, false, 0)">只有代码A正确</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 0)">只有代码B正确</button>
+                    <button class="option-btn" onclick="checkQuiz(event, true, 0)">两个都正确</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 0)">两个都不对</button>
+                </div>
+                <div class="explanation" id="explain0">
+                    <strong>✅ 正确答案：两个都正确！</strong><br><br>
+                    <strong>代码A的思路：</strong>直接从2开始，每次跳过奇数（i += 2），只累加偶数。这种方法更高效！<br>
+                    <strong>代码B的思路：</strong>从1开始遍历所有数字，用if判断是否为偶数（i % 2 == 0），是的话才累加。<br><br>
+                    <strong>🎯 对比：</strong>
+                    <ul>
+                        <li>代码A效率更高（循环25次）</li>
+                        <li>代码B更通用（可以轻松改成其他条件）</li>
+                        <li>两种方法都值得掌握！</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">模式3：输入验证</h3>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">持续要求用户输入，直到输入合法为止</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 要求用户输入1-100之间的数字</span>
+<span class="keyword">int</span> num;
+cout << <span class="string">"请输入1-100之间的数字: "</span>;
+cin >> num;
+
+<span class="keyword">while</span> (num < <span class="number">1</span> || num > <span class="number">100</span>) {
+    cout << <span class="string">"输入无效！请重新输入: "</span>;
+    cin >> num;
+}
+cout << <span class="string">"你输入的是: "</span> << num;</pre></div>
+                <div class="highlight-box">
+                    💡 <strong>应用场景：</strong>游戏中输入选项、密码验证、数据范围检查等
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">模式4：哨兵循环（Sentinel Loop）</h3>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">用特殊值作为结束信号</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 持续输入成绩，输入-1结束</span>
+<span class="keyword">int</span> score;
+<span class="keyword">int</span> sum = <span class="number">0</span>, count = <span class="number">0</span>;
+
+cout << <span class="string">"输入成绩(-1结束): "</span>;
+cin >> score;
+
+<span class="keyword">while</span> (score != <span class="number">-1</span>) {  <span class="comment">// -1是哨兵值</span>
+    sum += score;
+    count++;
+    cout << <span class="string">"继续输入(-1结束): "</span>;
+    cin >> score;
+}
+
+<span class="keyword">if</span> (count > <span class="number">0</span>)
+    cout << <span class="string">"平均分: "</span> << sum / count;</pre></div>
+                <div class="highlight-box">
+                    💡 <strong>哨兵值</strong>：特殊的标记值，用来告诉程序"输入结束了"。常用：-1、0、特殊字符等
+                </div>
+            </div>
+        </div>
+
+        <!-- 第2节：Break与Continue -->
+        <div class="section" id="section1">
+            <h2 class="section-title">⚡ Break 与 Continue</h2>
+            
+            <div class="emoji-large">🚦</div>
+
+            <div class="compare-grid">
+                <div class="card">
+                    <h3 class="card-title">🛑 Break - 立即退出</h3>
+                    <p style="font-size: 1.15em; margin-bottom: 20px;">遇到break，马上跳出整个循环</p>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 找到第一个能被7整除的数</span>
+<span class="keyword">int</span> i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">100</span>) {
+    <span class="keyword">if</span> (i % <span class="number">7</span> == <span class="number">0</span>) {
+        cout << <span class="string">"找到了: "</span> << i;
+        <span class="keyword">break</span>;  <span class="comment">// 立即退出循环</span>
+    }
+    i++;
+}
+<span class="comment">// 输出: 找到了: 7</span></pre></div>
+                    <div class="highlight-box">
+                        💡 break就像紧急出口，让你立刻离开循环！
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">⏭️ Continue - 跳过本次</h3>
+                    <p style="font-size: 1.15em; margin-bottom: 20px;">遇到continue，跳过本次剩余代码，开始下一次循环</p>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 打印1-10中的奇数</span>
+<span class="keyword">int</span> i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">10</span>) {
+    <span class="keyword">if</span> (i % <span class="number">2</span> == <span class="number">0</span>) {
+        i++;
+        <span class="keyword">continue</span>;  <span class="comment">// 跳过偶数</span>
+    }
+    cout << i << <span class="string">" "</span>;
+    i++;
+}
+<span class="comment">// 输出: 1 3 5 7 9</span></pre></div>
+                    <div class="highlight-box">
+                        💡 continue就像跳过广告，直接进入下一集！
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card">
+                <div class="quiz-question">🤔 问题2：这段代码会输出什么？<span class="badge badge-medium">中等</span></div>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">0</span>;
+<span class="keyword">while</span> (i < <span class="number">5</span>) {
+    i++;
+    <span class="keyword">if</span> (i == <span class="number">3</span>) {
+        <span class="keyword">continue</span>;
+    }
+    cout << i << <span class="string">" "</span>;
+}</pre></div>
+                <div class="quiz-options">
+                    <button class="option-btn" onclick="checkQuiz(event, false, 1)">1 2 3 4 5</button>
+                    <button class="option-btn" onclick="checkQuiz(event, true, 1)">1 2 4 5</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 1)">0 1 2 4 5</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 1)">1 2 3 4</button>
+                </div>
+                <div class="explanation" id="explain1">
+                    <strong>✅ 正确答案：1 2 4 5</strong><br><br>
+                    <strong>🔍 逐步分析：</strong>
+                    <table>
+                        <tr>
+                            <th>循环次数</th>
+                            <th>i的值</th>
+                            <th>i == 3?</th>
+                            <th>执行情况</th>
+                            <th>输出</th>
+                        </tr>
+                        <tr>
+                            <td>第1次</td>
+                            <td>0→1</td>
+                            <td>否</td>
+                            <td>正常执行</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>第2次</td>
+                            <td>1→2</td>
+                            <td>否</td>
+                            <td>正常执行</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>第3次</td>
+                            <td>2→3</td>
+                            <td>是</td>
+                            <td>continue跳过cout</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>第4次</td>
+                            <td>3→4</td>
+                            <td>否</td>
+                            <td>正常执行</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>第5次</td>
+                            <td>4→5</td>
+                            <td>否</td>
+                            <td>正常执行，然后i<5不成立，退出</td>
+                            <td>5</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <strong>🎯 关键：</strong>i++在continue之前，所以3被跳过了，但不影响i的增长！
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">⚠️ 使用Break和Continue的注意事项</h3>
+                <div class="compare-grid">
+                    <div class="highlight-box" style="background: rgba(0, 230, 118, 0.1); border-color: var(--success);">
+                        <strong>✅ 好的用法</strong>
+                        <ul>
+                            <li>找到目标后立即退出（break）</li>
+                            <li>跳过无效数据（continue）</li>
+                            <li>避免深层嵌套的if-else</li>
+                        </ul>
+                    </div>
+                    <div class="highlight-box" style="background: rgba(255, 51, 102, 0.1); border-color: var(--accent);">
+                        <strong>❌ 要小心</strong>
+                        <ul>
+                            <li>continue前忘记更新循环变量 → 死循环</li>
+                            <li>过多使用让代码难懂</li>
+                            <li>嵌套循环中只影响最内层循环</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card">
+                <div class="quiz-question">🤔 问题3：下面代码有问题吗？</div>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">0</span>;
+<span class="keyword">while</span> (i < <span class="number">10</span>) {
+    <span class="keyword">if</span> (i % <span class="number">2</span> == <span class="number">0</span>) {
+        <span class="keyword">continue</span>;  <span class="comment">// 想跳过偶数</span>
+    }
+    cout << i << <span class="string">" "</span>;
+    i++;
+}</pre></div>
+                <div class="quiz-options">
+                    <button class="option-btn" onclick="checkQuiz(event, false, 2)">没问题，能正确输出奇数</button>
+                    <button class="option-btn" onclick="checkQuiz(event, true, 2)">有问题，会导致死循环</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 2)">有问题，但不会死循环</button>
+                </div>
+                <div class="explanation" id="explain2">
+                    <strong>🐛 这是个陷阱！会导致死循环！</strong><br><br>
+                    <strong>问题分析：</strong>
+                    <ul>
+                        <li>第1次循环：i=0，是偶数，执行continue</li>
+                        <li>continue跳过了后面的i++</li>
+                        <li>i永远是0，永远满足i<10</li>
+                        <li>于是无限循环... 💀</li>
+                    </ul>
+                    <br>
+                    <strong>💊 修复方法：</strong>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">0</span>;
+<span class="keyword">while</span> (i < <span class="number">10</span>) {
+    i++;  <span class="comment">// 先增加！</span>
+    <span class="keyword">if</span> (i % <span class="number">2</span> == <span class="number">0</span>) {
+        <span class="keyword">continue</span>;
+    }
+    cout << i << <span class="string">" "</span>;
+}</pre></div>
+                    <strong>🎓 经验：</strong>使用continue时，确保循环变量在continue之前已经更新！
+                </div>
+            </div>
+        </div>
+
+        <!-- 第3节：嵌套循环 -->
+        <div class="section" id="section2">
+            <h2 class="section-title">🔁 嵌套循环</h2>
+            
+            <div class="emoji-large">🎪</div>
+
+            <div class="card">
+                <h3 class="card-title">什么是嵌套循环？</h3>
+                <p style="font-size: 1.2em; line-height: 1.8;">
+                    嵌套循环就是<strong>循环里面还有循环</strong>！就像俄罗斯套娃🪆，一层套一层。
+                </p>
+                <div class="highlight-box">
+                    💡 <strong>形象理解：</strong><br>
+                    外层循环像时钟的<strong>时针</strong>⏰，内层循环像<strong>分针</strong>。<br>
+                    时针走一格，分针要转一整圈（60下）！
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">基本结构</h3>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">1</span>;  <span class="comment">// 外层循环</span>
+<span class="keyword">while</span> (i <= <span class="number">3</span>) {
+    cout << <span class="string">"外层循环第"</span> << i << <span class="string">"次"</span> << endl;
+    
+    <span class="keyword">int</span> j = <span class="number">1</span>;  <span class="comment">// 内层循环</span>
+    <span class="keyword">while</span> (j <= <span class="number">4</span>) {
+        cout << <span class="string">"  内层循环第"</span> << j << <span class="string">"次"</span> << endl;
+        j++;
+    }
+    
+    i++;
+}</pre></div>
+                <div class="demo-area">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">📺 运行结果：</h4>
+                    <div class="demo-output" style="text-align: left;">外层循环第1次
+  内层循环第1次
+  内层循环第2次
+  内层循环第3次
+  内层循环第4次
+外层循环第2次
+  内层循环第1次
+  内层循环第2次
+  内层循环第3次
+  内层循环第4次
+外层循环第3次
+  内层循环第1次
+  内层循环第2次
+  内层循环第3次
+  内层循环第4次</div>
+                </div>
+                <div class="highlight-box">
+                    🎯 <strong>执行规律：</strong><br>
+                    外层每执行1次，内层完整执行4次<br>
+                    总共输出：3 × 4 = 12次 "内层循环"
+                </div>
+            </div>
+
+            <div class="quiz-card">
+                <div class="quiz-question">🤔 问题4：这段代码会输出多少个 ⭐ ？</div>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">5</span>) {
+    <span class="keyword">int</span> j = <span class="number">1</span>;
+    <span class="keyword">while</span> (j <= i) {  <span class="comment">// 注意这里！</span>
+        cout << <span class="string">"⭐"</span>;
+        j++;
+    }
+    cout << endl;
+    i++;
+}</pre></div>
+                <div class="quiz-options">
+                    <button class="option-btn" onclick="checkQuiz(event, false, 3)">25个星星</button>
+                    <button class="option-btn" onclick="checkQuiz(event, true, 3)">15个星星</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 3)">10个星星</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 3)">5个星星</button>
+                </div>
+                <div class="explanation" id="explain3">
+                    <strong>✅ 正确答案：15个星星</strong><br><br>
+                    <strong>🔍 详细分析：</strong>
+                    <table>
+                        <tr>
+                            <th>外层i</th>
+                            <th>内层j范围</th>
+                            <th>输出</th>
+                            <th>星星数</th>
+                        </tr>
+                        <tr>
+                            <td>i = 1</td>
+                            <td>j: 1到1</td>
+                            <td>⭐</td>
+                            <td>1个</td>
+                        </tr>
+                        <tr>
+                            <td>i = 2</td>
+                            <td>j: 1到2</td>
+                            <td>⭐⭐</td>
+                            <td>2个</td>
+                        </tr>
+                        <tr>
+                            <td>i = 3</td>
+                            <td>j: 1到3</td>
+                            <td>⭐⭐⭐</td>
+                            <td>3个</td>
+                        </tr>
+                        <tr>
+                            <td>i = 4</td>
+                            <td>j: 1到4</td>
+                            <td>⭐⭐⭐⭐</td>
+                            <td>4个</td>
+                        </tr>
+                        <tr>
+                            <td>i = 5</td>
+                            <td>j: 1到5</td>
+                            <td>⭐⭐⭐⭐⭐</td>
+                            <td>5个</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <strong>📊 总计：</strong>1 + 2 + 3 + 4 + 5 = 15个星星<br><br>
+                    <strong>🎯 关键：</strong>内层循环的次数由外层的i决定（j <= i），所以形成了一个三角形！
+                    <div class="demo-output" style="margin-top: 15px; text-align: left;">⭐
+⭐⭐
+⭐⭐⭐
+⭐⭐⭐⭐
+⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">经典案例：打印图形</h3>
+                <div class="compare-grid">
+                    <div class="compare-card">
+                        <div class="compare-title">正方形</div>
+                        <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">4</span>) {
+    <span class="keyword">int</span> j = <span class="number">1</span>;
+    <span class="keyword">while</span> (j <= <span class="number">4</span>) {
+        cout << <span class="string">"■"</span>;
+        j++;
+    }
+    cout << endl;
+    i++;
+}</pre></div>
+                        <div class="demo-output" style="font-size: 1.5em;">■■■■
+■■■■
+■■■■
+■■■■</div>
+                    </div>
+
+                    <div class="compare-card">
+                        <div class="compare-title">直角三角形</div>
+                        <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">1</span>;
+<span class="keyword">while</span> (i <= <span class="number">4</span>) {
+    <span class="keyword">int</span> j = <span class="number">1</span>;
+    <span class="keyword">while</span> (j <= i) {
+        cout << <span class="string">"▲"</span>;
+        j++;
+    }
+    cout << endl;
+    i++;
+}</pre></div>
+                        <div class="demo-output" style="font-size: 1.5em;">▲
+▲▲
+▲▲▲
+▲▲▲▲</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第4节：经典算法 -->
+        <div class="section" id="section3">
+            <h2 class="section-title">🎮 经典算法</h2>
+            
+            <div class="emoji-large">🧮</div>
+
+            <div class="card">
+                <h3 class="card-title">算法1：找最大值<span class="badge badge-easy">简单</span></h3>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">从一组数字中找出最大的那个</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 找出5个数中的最大值</span>
+<span class="keyword">int</span> max = <span class="number">0</span>;  <span class="comment">// 假设最大值初始为0</span>
+<span class="keyword">int</span> num;
+<span class="keyword">int</span> i = <span class="number">1</span>;
+
+<span class="keyword">while</span> (i <= <span class="number">5</span>) {
+    cout << <span class="string">"请输入第"</span> << i << <span class="string">"个数: "</span>;
+    cin >> num;
+    
+    <span class="keyword">if</span> (num > max) {
+        max = num;  <span class="comment">// 发现更大的，就更新max</span>
+    }
+    
+    i++;
+}
+
+cout << <span class="string">"最大值是: "</span> << max;</pre></div>
+                <div class="highlight-box">
+                    💡 <strong>思路：</strong><br>
+                    1. 设定一个"擂主"max<br>
+                    2. 每个数字来挑战<br>
+                    3. 比擂主大就替换擂主<br>
+                    4. 最后的擂主就是最大值！
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">算法2：判断质数<span class="badge badge-medium">中等</span></h3>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">质数：只能被1和自己整除的数（如2, 3, 5, 7, 11...）</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 判断一个数是否为质数</span>
+<span class="keyword">int</span> n;
+cout << <span class="string">"请输入一个数: "</span>;
+cin >> n;
+
+<span class="keyword">bool</span> isPrime = <span class="keyword">true</span>;  <span class="comment">// 假设是质数</span>
+<span class="keyword">int</span> i = <span class="number">2</span>;
+
+<span class="keyword">while</span> (i < n) {
+    <span class="keyword">if</span> (n % i == <span class="number">0</span>) {  <span class="comment">// 能被i整除</span>
+        isPrime = <span class="keyword">false</span>;  <span class="comment">// 不是质数</span>
+        <span class="keyword">break</span>;  <span class="comment">// 找到了，可以退出</span>
+    }
+    i++;
+}
+
+<span class="keyword">if</span> (isPrime && n > <span class="number">1</span>)
+    cout << n << <span class="string">" 是质数"</span>;
+<span class="keyword">else</span>
+    cout << n << <span class="string">" 不是质数"</span>;</pre></div>
+                <div class="highlight-box">
+                    💡 <strong>优化技巧：</strong>其实只需要检查到√n就够了！因为如果n有因子，必然一个≤√n，一个≥√n
+                </div>
+            </div>
+
+            <div class="quiz-card">
+                <div class="quiz-question">🤔 问题5：这段代码的作用是什么？<span class="badge badge-medium">中等</span></div>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> n = <span class="number">12345</span>;
+<span class="keyword">int</span> count = <span class="number">0</span>;
+
+<span class="keyword">while</span> (n > <span class="number">0</span>) {
+    count++;
+    n = n / <span class="number">10</span>;
+}
+
+cout << count;</pre></div>
+                <div class="quiz-options">
+                    <button class="option-btn" onclick="checkQuiz(event, false, 4)">计算12345的各位数字之和</button>
+                    <button class="option-btn" onclick="checkQuiz(event, true, 4)">计算12345有多少位数字</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 4)">翻转12345得到54321</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 4)">找出12345中最大的数字</button>
+                </div>
+                <div class="explanation" id="explain4">
+                    <strong>✅ 正确！这段代码计算数字的位数（5位）</strong><br><br>
+                    <strong>🔍 执行过程：</strong>
+                    <table>
+                        <tr>
+                            <th>循环次数</th>
+                            <th>n的值</th>
+                            <th>n / 10</th>
+                            <th>count</th>
+                        </tr>
+                        <tr>
+                            <td>第1次</td>
+                            <td>12345</td>
+                            <td>1234</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>第2次</td>
+                            <td>1234</td>
+                            <td>123</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>第3次</td>
+                            <td>123</td>
+                            <td>12</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>第4次</td>
+                            <td>12</td>
+                            <td>1</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>第5次</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>结束</td>
+                            <td>0</td>
+                            <td>-</td>
+                            <td>5</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <strong>🎯 原理：</strong>每次除以10，去掉最后一位数字，直到变成0，count就是位数！<br>
+                    <strong>💡 扩展：</strong>
+                    <ul>
+                        <li>如果要求各位数字之和，用 n % 10 取出最后一位</li>
+                        <li>如果要翻转数字，用 n % 10 取出，再拼接</li>
+                    </ul>
+                </div>
+            </quiz-card>
+
+            <div class="card">
+                <h3 class="card-title">算法3：最大公约数（GCD）<span class="badge badge-hard">挑战</span></h3>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">欧几里得算法（辗转相除法）</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="comment">// 求两个数的最大公约数</span>
+<span class="keyword">int</span> a = <span class="number">48</span>, b = <span class="number">18</span>;
+
+<span class="keyword">while</span> (b != <span class="number">0</span>) {
+    <span class="keyword">int</span> temp = b;
+    b = a % b;  <span class="comment">// b变成余数</span>
+    a = temp;   <span class="comment">// a变成原来的b</span>
+}
+
+cout << <span class="string">"最大公约数: "</span> << a;  <span class="comment">// 输出: 6</span></pre></div>
+                <div class="demo-area">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">📺 执行过程演示：</h4>
+                    <div class="demo-output" style="text-align: left;">开始: a=48, b=18
+
+第1次循环:
+  48 ÷ 18 = 2 ... 余12
+  a=18, b=12
+
+第2次循环:
+  18 ÷ 12 = 1 ... 余6
+  a=12, b=6
+
+第3次循环:
+  12 ÷ 6 = 2 ... 余0
+  a=6, b=0
+
+b=0，循环结束
+最大公约数 = 6</div>
+                </div>
+                <div class="highlight-box">
+                    💡 <strong>数学原理：</strong>两个数的最大公约数等于其中较小数和两数相除余数的最大公约数
+                </div>
+            </div>
+        </div>
+
+        <!-- 第5节：综合练习 -->
+        <div class="section" id="section4">
+            <h2 class="section-title">🧪 综合练习</h2>
+            
+            <div class="emoji-large">🎓</div>
+
+            <div class="quiz-card">
+                <div class="quiz-question">🎯 挑战1：这段代码输出什么？<span class="badge badge-medium">中等</span></div>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> result = <span class="number">1</span>;
+<span class="keyword">int</span> i = <span class="number">1</span>;
+
+<span class="keyword">while</span> (i <= <span class="number">5</span>) {
+    result *= i;  <span class="comment">// result = result * i</span>
+    i++;
+}
+
+cout << result;</pre></div>
+                <div class="quiz-options">
+                    <button class="option-btn" onclick="checkQuiz(event, false, 5)">15 (1+2+3+4+5)</button>
+                    <button class="option-btn" onclick="checkQuiz(event, true, 5)">120 (1×2×3×4×5)</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 5)">5</button>
+                    <button class="option-btn" onclick="checkQuiz(event, false, 5)">25</button>
+                </div>
+                <div class="explanation" id="explain5">
+                    <strong>✅ 正确答案：120</strong><br><br>
+                    这段代码计算<strong>阶乘</strong>（Factorial）：5! = 1×2×3×4×5 = 120<br><br>
+                    <strong>📊 执行过程：</strong>
+                    <ul>
+                        <li>i=1: result = 1 × 1 = 1</li>
+                        <li>i=2: result = 1 × 2 = 2</li>
+                        <li>i=3: result = 2 × 3 = 6</li>
+                        <li>i=4: result = 6 × 4 = 24</li>
+                        <li>i=5: result = 24 × 5 = 120</li>
+                    </ul>
+                    <br>
+                    <strong>💡 应用：</strong>阶乘在排列组合、概率计算中很常用！
+                </div>
+            </div>
+
+            <div class="quiz-card">
+                <div class="quiz-question">🎯 挑战2：找出代码中的所有错误<span class="badge badge-hard">困难</span></div>
+                <p style="font-size: 1.15em; margin-bottom: 20px;">这段代码想打印1到10的所有奇数，但有多个错误：</p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">0</span>;
+<span class="keyword">while</span> (i < <span class="number">10</span>);  <span class="comment">// 错误1：???</span>
+{
+    <span class="keyword">if</span> (i % <span class="number">2</span> = <span class="number">1</span>)  <span class="comment">// 错误2：???</span>
+        cout << i << <span class="string">" "</span>;
+    <span class="comment">// 错误3：???</span>
+}</pre></div>
+                <button class="interactive-btn" onclick="toggleHint('hint-final')" style="margin: 20px 0;">💡 查看错误解析</button>
+                <div class="hint-box" id="hint-final" style="display: none;">
+                    <div class="hint-content show">
+                        <strong>🐛 错误1：while后面的分号</strong><br>
+                        while (i < 10)<strong style="color: var(--accent);">;</strong> ← 这个分号让while变成空循环！<br>
+                        <strong>修复：</strong>删除分号<br><br>
+
+                        <strong>🐛 错误2：= 应该是 ==</strong><br>
+                        if (i % 2 <strong style="color: var(--accent);">=</strong> 1) ← 这是赋值，不是比较！<br>
+                        <strong>修复：</strong>改成 i % 2 == 1<br><br>
+
+                        <strong>🐛 错误3：忘记更新i</strong><br>
+                        循环体内没有i++，会导致死循环！<br>
+                        <strong>修复：</strong>在循环体最后加上 i++;<br><br>
+
+                        <strong>✅ 正确代码：</strong>
+                        <div class="code-block" style="margin-top: 15px;"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> i = <span class="number">0</span>;
+<span class="keyword">while</span> (i < <span class="number">10</span>) {  <span class="comment">// 去掉分号</span>
+    i++;  <span class="comment">// 先增加（避免从0开始）</span>
+    <span class="keyword">if</span> (i % <span class="number">2</span> == <span class="number">1</span>)  <span class="comment">// 用==比较</span>
+        cout << i << <span class="string">" "</span>;
+}
+<span class="comment">// 输出: 1 3 5 7 9</span></pre></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">🏆 终极挑战：数字游戏</h3>
+                <p style="font-size: 1.2em; line-height: 1.8; margin-bottom: 20px;">
+                    下面的代码实现了一个经典游戏：<strong>猜数字加强版</strong><br>
+                    仔细阅读代码，理解它是如何工作的：
+                </p>
+                <div class="code-block"><pre style="margin: 0; font-family: inherit;"><span class="keyword">int</span> secret = <span class="number">42</span>;  <span class="comment">// 答案</span>
+<span class="keyword">int</span> guess;
+<span class="keyword">int</span> attempts = <span class="number">0</span>;  <span class="comment">// 猜测次数</span>
+<span class="keyword">int</span> maxAttempts = <span class="number">5</span>;  <span class="comment">// 最多猜5次</span>
+
+cout << <span class="string">"猜一个1-100的数字，你有5次机会！"</span> << endl;
+
+<span class="keyword">while</span> (attempts < maxAttempts) {
+    cout << <span class="string">"第"</span> << (attempts + <span class="number">1</span>) << <span class="string">"次机会: "</span>;
+    cin >> guess;
+    attempts++;
+    
+    <span class="keyword">if</span> (guess == secret) {
+        cout << <span class="string">"🎉 恭喜！你猜对了！"</span> << endl;
+        <span class="keyword">break</span>;  <span class="comment">// 猜对了就退出</span>
+    } <span class="keyword">else</span> <span class="keyword">if</span> (guess < secret) {
+        cout << <span class="string">"太小了！"</span> << endl;
+    } <span class="keyword">else</span> {
+        cout << <span class="string">"太大了！"</span> << endl;
+    }
+    
+    <span class="keyword">if</span> (attempts == maxAttempts) {
+        cout << <span class="string">"😢 机会用完了！答案是: "</span> << secret << endl;
+    }
+}</pre></div>
+                <div class="highlight-box">
+                    <strong>🎯 这段代码用到了哪些知识点？</strong>
+                    <ul>
+                        <li>✅ while循环 - 重复猜测</li>
+                        <li>✅ 条件判断 - 判断大小</li>
+                        <li>✅ break语句 - 猜对后退出</li>
+                        <li>✅ 计数器 - 记录猜测次数</li>
+                        <li>✅ 输入验证 - 给出提示</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="background: linear-gradient(135deg, rgba(0, 230, 118, 0.2), rgba(0, 212, 255, 0.2)); border-color: var(--success);">
+                <h3 class="card-title" style="color: var(--success);">🎓 课后思考</h3>
+                <div style="font-size: 1.15em; line-height: 2;">
+                    <p><strong>1. While vs For循环</strong></p>
+                    <p style="margin-left: 20px; color: #ddd;">什么情况下用while更合适？什么情况下用for更合适？</p>
+                    
+                    <p style="margin-top: 20px;"><strong>2. 效率优化</strong></p>
+                    <p style="margin-left: 20px; color: #ddd;">如何让循环跑得更快？提前退出、减少判断次数...</p>
+                    
+                    <p style="margin-top: 20px;"><strong>3. 实战应用</strong></p>
+                    <p style="margin-left: 20px; color: #ddd;">尝试用while循环实现：计算器、密码验证、简单游戏...</p>
+                </div>
+            </div>
+
+            <div class="emoji-large">🎉</div>
+            <h3 style="text-align: center; font-size: 2.5em; margin-top: 20px; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                恭喜完成第二课！
+            </h3>
+            <p style="text-align: center; font-size: 1.3em; color: #8B9DC3; margin-top: 15px;">
+                你已经掌握了while循环的高级用法！🏆
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+
+        function showSection(index) {
+            const sections = document.querySelectorAll('.section');
+            const pills = document.querySelectorAll('.nav-pill');
+            
+            sections.forEach(s => s.classList.remove('active'));
+            pills.forEach(p => p.classList.remove('active'));
+            
+            sections[index].classList.add('active');
+            pills[index].classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateScore(points) {
+            score += points;
+            document.getElementById('score').textContent = score;
+            
+            // 分数动画
+            const scoreEl = document.getElementById('score');
+            scoreEl.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                scoreEl.style.transform = 'scale(1)';
+            }, 300);
+        }
+
+        function checkQuiz(event, isCorrect, questionId) {
+            event.stopPropagation();
+            const button = event.target;
+            const options = button.parentElement.querySelectorAll('.option-btn');
+            
+            // 禁用所有选项
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                opt.style.opacity = '0.6';
+            });
+            
+            button.style.opacity = '1';
+            
+            if (isCorrect) {
+                button.classList.add('correct');
+                updateScore(15);
+                setTimeout(() => {
+                    document.getElementById('explain' + questionId).classList.add('show');
+                }, 600);
+            } else {
+                button.classList.add('wrong');
+                setTimeout(() => {
+                    button.classList.remove('wrong');
+                }, 600);
+            }
+        }
+
+        function toggleHint(hintId) {
+            const hint = document.getElementById(hintId);
+            if (hint.style.display === 'none') {
+                hint.style.display = 'block';
+                updateScore(5);
+            } else {
+                hint.style.display = 'none';
+            }
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('While循环进阶课件已加载！');
+            
+            // 添加平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+
+        // 分数动画效果
+        document.getElementById('score').style.transition = 'transform 0.3s';
+    </script>
+</body>
+</html>
