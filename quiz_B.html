@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>While循环小测验 - B卷 ⭐</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .info { font-size: 1.2em; opacity: 0.9; }
+        .start-screen, .quiz-screen, .result-screen {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .start-screen { text-align: center; }
+        .emoji-big { font-size: 5em; margin-bottom: 20px; }
+        .student-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 25px 0;
+        }
+        .student-btn {
+            background: #f0f0f0;
+            border: 3px solid #ddd;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .student-btn:hover { background: #11998e; color: white; border-color: #11998e; }
+        .student-btn.selected { background: #11998e; color: white; border-color: #11998e; transform: scale(1.1); }
+        .start-btn {
+            background: linear-gradient(135deg, #f5af19, #f12711);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .start-btn:hover:not(:disabled) { transform: scale(1.05); }
+        .quiz-screen { display: none; }
+        .quiz-screen.active { display: block; }
+        .progress-bar {
+            background: #eee;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .question-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #666;
+        }
+        .question-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .code-box {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-box .kw { color: #c586c0; }
+        .code-box .num { color: #b5cea8; }
+        .code-box .str { color: #ce9178; }
+        .code-box .cmt { color: #6a9955; }
+        .options { display: grid; gap: 12px; margin: 20px 0; }
+        .option {
+            background: #f8f9fa;
+            border: 3px solid #e0e0e0;
+            padding: 15px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+        .option:hover { border-color: #11998e; background: #e8fff8; }
+        .option.selected { border-color: #11998e; background: #d0fff0; }
+        .option.correct { border-color: #28a745; background: #d4edda; }
+        .option.wrong { border-color: #dc3545; background: #f8d7da; }
+        .fill-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 3px solid #11998e;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+        }
+        .fill-input:focus { outline: none; box-shadow: 0 0 10px rgba(17,153,142,0.3); }
+        .fill-input.correct { border-color: #28a745; background: #d4edda; }
+        .fill-input.wrong { border-color: #dc3545; background: #f8d7da; }
+        .tf-btns { display: flex; gap: 20px; justify-content: center; margin: 20px 0; }
+        .tf-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s;
+        }
+        .tf-btn:hover { transform: scale(1.05); }
+        .tf-btn.selected { transform: scale(1.1); }
+        .tf-btn.true.selected { background: #d4edda; border-color: #28a745; }
+        .tf-btn.false.selected { background: #f8d7da; border-color: #dc3545; }
+        .explanation {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .explanation.wrong-exp { background: #ffebee; border-color: #dc3545; }
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+        .btn {
+            padding: 12px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-submit { background: #11998e; color: white; }
+        .btn-next { background: #f12711; color: white; display: none; }
+        .btn-next.show { display: inline-block; }
+        .btn:hover { transform: scale(1.05); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .result-screen { display: none; text-align: center; }
+        .result-screen.active { display: block; }
+        .result-emoji { font-size: 6em; margin-bottom: 20px; }
+        .result-score { font-size: 3em; color: #11998e; font-weight: bold; margin: 20px 0; }
+        .result-stats { display: flex; justify-content: center; gap: 40px; margin: 30px 0; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 2em; color: #38ef7d; font-weight: bold; }
+        .stat-label { color: #666; }
+        .result-msg { font-size: 1.3em; color: #666; margin: 20px 0; }
+        .restart-btn {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .restart-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⭐ While循环小测验 - B卷</h1>
+            <p class="info">10道题 · 20分钟 · 轻松挑战</p>
+        </header>
+
+        <div class="start-screen" id="startScreen">
+            <div class="emoji-big">🎯</div>
+            <h2>准备好了吗？</h2>
+            <p style="margin:15px 0;color:#666;">选择你的名字，开始答题！</p>
+            <div class="student-grid">
+                <button class="student-btn" onclick="selectStudent(this,'凡凡')">凡凡</button>
+                <button class="student-btn" onclick="selectStudent(this,'QQ')">QQ</button>
+                <button class="student-btn" onclick="selectStudent(this,'小龙')">小龙</button>
+                <button class="student-btn" onclick="selectStudent(this,'俊俊')">俊俊</button>
+                <button class="student-btn" onclick="selectStudent(this,'宇腾')">宇腾</button>
+                <button class="student-btn" onclick="selectStudent(this,'小紫')">小紫</button>
+                <button class="student-btn" onclick="selectStudent(this,'艺闻')">艺闻</button>
+            </div>
+            <button class="start-btn" id="startBtn" onclick="startQuiz()" disabled>开始答题 🚀</button>
+        </div>
+
+        <div class="quiz-screen" id="quizScreen">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="question-info">
+                <span>👤 <strong id="studentName">-</strong></span>
+                <span>第 <strong id="qNum">1</strong> / 10 题</span>
+                <span>得分: <strong id="scoreDisplay">0</strong></span>
+            </div>
+            <div id="questionArea"></div>
+            <div class="btn-group">
+                <button class="btn btn-submit" id="submitBtn" onclick="submitAnswer()">提交答案</button>
+                <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">下一题 →</button>
+            </div>
+        </div>
+
+        <div class="result-screen" id="resultScreen">
+            <div class="result-emoji" id="resultEmoji">🎉</div>
+            <h2>答题完成！</h2>
+            <div class="result-score" id="resultScore">0分</div>
+            <div class="result-stats">
+                <div class="stat">
+                    <div class="stat-value" id="correctNum">0</div>
+                    <div class="stat-label">答对</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="wrongNum">0</div>
+                    <div class="stat-label">答错</div>
+                </div>
+            </div>
+            <div class="result-msg" id="resultMsg"></div>
+            <button class="restart-btn" onclick="restart()">再来一次 🔄</button>
+        </div>
+    </div>
+
+<script>
+const questions = [
+    {
+        type: 'choice',
+        question: 'while循环和if语句的主要区别是什么？',
+        options: ['while可以重复执行多次', 'if执行更快', '没有区别', 'while只能用数字'],
+        answer: 0,
+        explanation: 'while循环会重复执行，只要条件为真就一直循环；if只执行一次。'
+    },
+    {
+        type: 'tf',
+        question: 'while循环中，循环变量必须在循环开始前初始化。',
+        answer: true,
+        explanation: '正确！循环变量需要有初始值，否则条件判断会出错。'
+    },
+    {
+        type: 'choice',
+        question: '这段代码会输出什么？',
+        code: '<span class="kw">int</span> x = <span class="num">10</span>;\n<span class="kw">while</span> (x > <span class="num">7</span>) {\n    cout << x << <span class="str">" "</span>;\n    x--;\n}',
+        options: ['10 9 8 7', '10 9 8', '9 8 7', '10 9 8 7 6'],
+        answer: 1,
+        explanation: 'x从10开始，每次减1。当x=7时，7>7为假，退出。输出10 9 8。'
+    },
+    {
+        type: 'fill',
+        question: '补全代码，让循环输出 1 2 3 4 5',
+        code: '<span class="kw">int</span> i = <span class="num">1</span>;\n<span class="kw">while</span> ( ??? ) {\n    cout << i << <span class="str">" "</span>;\n    i++;\n}',
+        answer: ['i <= 5', 'i<=5', 'i < 6', 'i<6'],
+        placeholder: '输入条件',
+        explanation: '从1到5，条件可以是 i <= 5 或 i < 6。'
+    },
+    {
+        type: 'choice',
+        question: '累加器sum的初始值通常是多少？',
+        options: ['1', '0', '-1', '10'],
+        answer: 1,
+        explanation: '累加器初始值是0，因为0加任何数等于那个数本身。'
+    },
+    {
+        type: 'choice',
+        question: '这段代码有什么问题？',
+        code: '<span class="kw">int</span> i = <span class="num">1</span>;\n<span class="kw">while</span> (i <= <span class="num">5</span>)<span style="color:#f44;font-weight:bold">;</span> {\n    cout << i;\n    i++;\n}',
+        options: ['i应该从0开始', 'while后面多了分号', '缺少大括号', '没有问题'],
+        answer: 1,
+        explanation: 'while后面的分号让循环体变空，大括号里的代码不属于循环，造成死循环！'
+    },
+    {
+        type: 'tf',
+        question: 'break语句可以立即跳出while循环。',
+        answer: true,
+        explanation: '正确！break会立即终止循环，跳到循环后面的代码继续执行。'
+    },
+    {
+        type: 'choice',
+        question: '这段代码循环几次？',
+        code: '<span class="kw">int</span> i = <span class="num">0</span>;\n<span class="kw">while</span> (i < <span class="num">4</span>) {\n    i++;\n}',
+        options: ['3次', '4次', '5次', '0次'],
+        answer: 1,
+        explanation: 'i从0开始：0→1→2→3→4。当i=4时退出，共执行4次。'
+    },
+    {
+        type: 'fill',
+        question: '填写关键字，让循环跳过i=3这一次',
+        code: '<span class="kw">int</span> i = <span class="num">0</span>;\n<span class="kw">while</span> (i < <span class="num">5</span>) {\n    i++;\n    <span class="kw">if</span> (i == <span class="num">3</span>) ???;\n    cout << i << <span class="str">" "</span>;\n}',
+        answer: ['continue'],
+        placeholder: '输入关键字',
+        explanation: 'continue会跳过本次循环剩余代码，直接开始下一次循环。'
+    },
+    {
+        type: 'choice',
+        question: '打印一个3行5列的星号矩形，需要循环多少次输出星号？',
+        options: ['8次', '15次', '3次', '5次'],
+        answer: 1,
+        explanation: '3行×5列=15个星号，所以内层循环共执行15次。'
+    }
+];
+
+let currentStudent = '';
+let currentQ = 0;
+let score = 0;
+let correct = 0;
+let selectedAnswer = null;
+let answered = false;
+
+function selectStudent(btn, name) {
+    document.querySelectorAll('.student-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentStudent = name;
+    document.getElementById('startBtn').disabled = false;
+}
+
+function startQuiz() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('quizScreen').classList.add('active');
+    document.getElementById('studentName').textContent = currentStudent;
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = questions[currentQ];
+    document.getElementById('qNum').textContent = currentQ + 1;
+    document.getElementById('progressFill').style.width = ((currentQ + 1) / questions.length * 100) + '%';
+
+    let html = '<div class="question-title">' + q.question + '</div>';
+    if (q.code) html += '<div class="code-box"><pre>' + q.code + '</pre></div>';
+
+    if (q.type === 'choice') {
+        html += '<div class="options">';
+        q.options.forEach((opt, i) => {
+            html += '<div class="option" onclick="selectOption(' + i + ')" id="opt' + i + '">' + String.fromCharCode(65 + i) + '. ' + opt + '</div>';
+        });
+        html += '</div>';
+    } else if (q.type === 'tf') {
+        html += '<div class="tf-btns">';
+        html += '<button class="tf-btn true" onclick="selectTF(true)" id="tfTrue">✅ 正确</button>';
+        html += '<button class="tf-btn false" onclick="selectTF(false)" id="tfFalse">❌ 错误</button>';
+        html += '</div>';
+    } else if (q.type === 'fill') {
+        html += '<input type="text" class="fill-input" id="fillInput" placeholder="' + (q.placeholder || '请输入答案') + '">';
+    }
+
+    html += '<div class="explanation" id="explanation">' + q.explanation + '</div>';
+    document.getElementById('questionArea').innerHTML = html;
+
+    selectedAnswer = null;
+    answered = false;
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectOption(i) {
+    if (answered) return;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    document.getElementById('opt' + i).classList.add('selected');
+    selectedAnswer = i;
+}
+
+function selectTF(val) {
+    if (answered) return;
+    document.getElementById('tfTrue').classList.remove('selected');
+    document.getElementById('tfFalse').classList.remove('selected');
+    document.getElementById(val ? 'tfTrue' : 'tfFalse').classList.add('selected');
+    selectedAnswer = val;
+}
+
+function submitAnswer() {
+    if (answered) return;
+    const q = questions[currentQ];
+    let isCorrect = false;
+
+    if (q.type === 'choice') {
+        if (selectedAnswer === null) { alert('请选择答案！'); return; }
+        isCorrect = selectedAnswer === q.answer;
+        document.querySelectorAll('.option').forEach((o, i) => {
+            if (i === q.answer) o.classList.add('correct');
+            else if (i === selectedAnswer) o.classList.add('wrong');
+        });
+    } else if (q.type === 'tf') {
+        if (selectedAnswer === null) { alert('请选择正确或错误！'); return; }
+        isCorrect = selectedAnswer === q.answer;
+    } else if (q.type === 'fill') {
+        const input = document.getElementById('fillInput');
+        const val = input.value.trim().replace(/\s+/g, '');
+        if (!val) { alert('请输入答案！'); return; }
+        isCorrect = q.answer.some(a => val.toLowerCase() === a.toLowerCase().replace(/\s+/g, ''));
+        input.classList.add(isCorrect ? 'correct' : 'wrong');
+        input.disabled = true;
+    }
+
+    answered = true;
+    if (isCorrect) { score += 10; correct++; }
+    document.getElementById('scoreDisplay').textContent = score;
+
+    const exp = document.getElementById('explanation');
+    if (!isCorrect) exp.classList.add('wrong-exp');
+    exp.classList.add('show');
+
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('nextBtn').classList.add('show');
+    document.getElementById('nextBtn').textContent = currentQ < questions.length - 1 ? '下一题 →' : '查看结果 🏆';
+}
+
+function nextQuestion() {
+    if (currentQ < questions.length - 1) {
+        currentQ++;
+        showQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    document.getElementById('quizScreen').classList.remove('active');
+    document.getElementById('resultScreen').classList.add('active');
+
+    document.getElementById('resultScore').textContent = score + '分';
+    document.getElementById('correctNum').textContent = correct;
+    document.getElementById('wrongNum').textContent = questions.length - correct;
+
+    let emoji, msg;
+    if (score >= 90) { emoji = '🏆'; msg = currentStudent + ' 太棒了！满分学霸！'; }
+    else if (score >= 70) { emoji = '🌟'; msg = currentStudent + ' 很不错，继续加油！'; }
+    else if (score >= 50) { emoji = '💪'; msg = currentStudent + ' 还可以，再复习一下！'; }
+    else { emoji = '📚'; msg = currentStudent + ' 需要多练习哦！'; }
+
+    document.getElementById('resultEmoji').textContent = emoji;
+    document.getElementById('resultMsg').textContent = msg;
+}
+
+function restart() {
+    currentQ = 0;
+    score = 0;
+    correct = 0;
+    document.getElementById('resultScreen').classList.remove('active');
+    document.getElementById('startScreen').style.display = 'block';
+    document.querySelectorAll('.student-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('startBtn').disabled = true;
+    currentStudent = '';
+}
+</script>
+</body>
+</html>
