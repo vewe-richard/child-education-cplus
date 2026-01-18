@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>While循环大挑战 - 第2套 🎯</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6C5CE7;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --warning: #FDCB6E;
+            --success: #00B894;
+            --danger: #D63031;
+            --dark: #2D3436;
+            --light: #DFE6E9;
+            --gold: #F9CA24;
+        }
+        body {
+            font-family: 'Noto Sans SC', 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        .stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255,255,255,0.2);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-icon { font-size: 1.8em; }
+        .status-value {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: var(--gold);
+        }
+        .status-label {
+            font-size: 0.9em;
+            color: var(--light);
+        }
+        .timer {
+            background: linear-gradient(135deg, var(--danger), #e17055);
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 1.4em;
+            font-weight: 800;
+            box-shadow: 0 5px 20px rgba(214,48,49,0.5);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold), var(--warning), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--light);
+        }
+        .start-screen {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .castle-emoji {
+            font-size: 6em;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .student-select { margin: 30px 0; }
+        .student-select h3 {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+        .student-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+        .student-btn {
+            background: rgba(108,92,231,0.3);
+            border: 3px solid var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .student-btn:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: translateY(-3px);
+        }
+        .student-btn.selected {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 25px rgba(108,92,231,0.7);
+            transform: scale(1.08);
+        }
+        .start-btn {
+            background: linear-gradient(135deg, var(--gold), var(--warning));
+            color: var(--dark);
+            border: none;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-size: 1.4em;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 35px rgba(249,202,36,0.5);
+            margin-top: 25px;
+        }
+        .start-btn:hover:not(:disabled) {
+            transform: translateY(-5px) scale(1.05);
+        }
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .progress-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .progress-dot {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .progress-dot.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px rgba(108,92,231,0.7);
+            transform: scale(1.15);
+        }
+        .progress-dot.completed { background: var(--success); }
+        .progress-dot.wrong { background: var(--danger); }
+        .quiz-section {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 35px;
+            border: 2px solid rgba(255,255,255,0.1);
+            display: none;
+        }
+        .quiz-section.active { display: block; }
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .question-type {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95em;
+        }
+        .question-points {
+            background: linear-gradient(135deg, var(--gold), var(--warning));
+            color: var(--dark);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: 800;
+        }
+        .question-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .question-number { color: var(--secondary); }
+        .code-block {
+            background: #1a1a2e;
+            border: 2px solid rgba(0,206,201,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.05em;
+            line-height: 1.7;
+            overflow-x: auto;
+            position: relative;
+        }
+        .code-block::before {
+            content: 'C++';
+            position: absolute;
+            top: 8px; right: 12px;
+            background: var(--secondary);
+            color: var(--dark);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 700;
+        }
+        .code-block .kw { color: #FF79C6; font-weight: 600; }
+        .code-block .str { color: #F1FA8C; }
+        .code-block .cmt { color: #6272A4; font-style: italic; }
+        .code-block .num { color: #BD93F9; }
+        .code-block .blank {
+            background: var(--warning);
+            color: var(--dark);
+            padding: 2px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+        .options-grid {
+            display: grid;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .option-btn {
+            background: rgba(255,255,255,0.08);
+            border: 3px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: rgba(108,92,231,0.3);
+            border-color: var(--primary);
+            transform: translateX(8px);
+        }
+        .option-btn.selected {
+            background: rgba(108,92,231,0.4);
+            border-color: var(--primary);
+        }
+        .option-btn.correct {
+            background: rgba(0,184,148,0.4);
+            border-color: var(--success);
+        }
+        .option-btn.wrong {
+            background: rgba(214,48,49,0.4);
+            border-color: var(--danger);
+        }
+        .option-btn:disabled { cursor: not-allowed; }
+        .option-letter {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .fill-input {
+            background: rgba(255,255,255,0.1);
+            border: 3px solid var(--secondary);
+            color: white;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-size: 1.15em;
+            font-family: 'Fira Code', monospace;
+            width: 100%;
+            max-width: 350px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        .fill-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(108,92,231,0.5);
+        }
+        .fill-input.correct {
+            border-color: var(--success);
+            background: rgba(0,184,148,0.2);
+        }
+        .fill-input.wrong {
+            border-color: var(--danger);
+            background: rgba(214,48,49,0.2);
+        }
+        .true-false-btns {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        .tf-btn {
+            background: rgba(255,255,255,0.1);
+            border: 3px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 22px 55px;
+            border-radius: 18px;
+            font-size: 1.4em;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tf-btn.true:hover { background: rgba(0,184,148,0.3); border-color: var(--success); }
+        .tf-btn.false:hover { background: rgba(214,48,49,0.3); border-color: var(--danger); }
+        .tf-btn.selected.true { background: var(--success); border-color: var(--success); }
+        .tf-btn.selected.false { background: var(--danger); border-color: var(--danger); }
+        .explanation {
+            background: rgba(0,184,148,0.15);
+            border-left: 5px solid var(--success);
+            padding: 22px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+            line-height: 1.7;
+        }
+        .explanation.show { display: block; }
+        .explanation.wrong {
+            background: rgba(214,48,49,0.15);
+            border-color: var(--danger);
+        }
+        .explanation-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(108,92,231,0.5);
+        }
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-4px);
+        }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .next-btn {
+            background: linear-gradient(135deg, var(--gold), var(--warning));
+            color: var(--dark);
+            border: none;
+            padding: 15px 45px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+        }
+        .next-btn.show { display: inline-block; }
+        .next-btn:hover { transform: translateY(-4px); }
+        .result-screen {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 2px solid rgba(255,255,255,0.1);
+            display: none;
+        }
+        .result-screen.active { display: block; }
+        .result-trophy {
+            font-size: 8em;
+            margin-bottom: 20px;
+        }
+        .result-title {
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--gold), var(--warning));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .result-score {
+            font-size: 4em;
+            font-weight: 900;
+            color: var(--gold);
+            margin: 25px 0;
+        }
+        .result-stats {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            margin: 35px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 22px 35px;
+            border-radius: 18px;
+        }
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 900;
+            color: var(--secondary);
+        }
+        .stat-label {
+            font-size: 1em;
+            color: var(--light);
+            margin-top: 5px;
+        }
+        .result-message {
+            font-size: 1.3em;
+            color: var(--light);
+            margin: 25px 0;
+            line-height: 1.7;
+        }
+        .result-rank {
+            display: inline-block;
+            padding: 12px 35px;
+            border-radius: 25px;
+            font-size: 1.4em;
+            font-weight: 800;
+            margin: 15px 0;
+        }
+        .rank-gold { background: linear-gradient(135deg, var(--gold), #F39C12); color: var(--dark); }
+        .rank-silver { background: linear-gradient(135deg, #BDC3C7, #95A5A6); color: var(--dark); }
+        .rank-bronze { background: linear-gradient(135deg, #E67E22, #D35400); color: white; }
+        .rank-normal { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            border: none;
+            padding: 18px 55px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 25px;
+        }
+        .restart-btn:hover { transform: translateY(-4px) scale(1.03); }
+        .leaderboard {
+            margin-top: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 18px;
+            padding: 25px;
+        }
+        .leaderboard h3 {
+            font-size: 1.6em;
+            color: var(--gold);
+            margin-bottom: 18px;
+        }
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 12px 18px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin: 8px 0;
+        }
+        .leaderboard-rank {
+            font-size: 1.4em;
+            font-weight: 900;
+            width: 45px;
+        }
+        .leaderboard-rank.gold { color: var(--gold); }
+        .leaderboard-rank.silver { color: #95A5A6; }
+        .leaderboard-rank.bronze { color: #D35400; }
+        .leaderboard-name { flex: 1; font-size: 1.1em; font-weight: 600; }
+        .leaderboard-score { font-size: 1.2em; font-weight: 800; color: var(--secondary); }
+        .score-popup {
+            position: fixed;
+            font-size: 2em;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 1000;
+            animation: scoreFloat 1s ease-out forwards;
+        }
+        @keyframes scoreFloat {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.4); }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px; height: 10px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .quiz-section { padding: 20px; }
+            .true-false-btns { flex-direction: column; }
+            .tf-btn { padding: 18px 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="container">
+        <div class="status-bar" id="statusBar" style="display:none;">
+            <div class="status-item">
+                <span class="status-icon">👤</span>
+                <div>
+                    <div class="status-value" id="currentStudent">-</div>
+                    <div class="status-label">挑战者</div>
+                </div>
+            </div>
+            <div class="status-item">
+                <span class="status-icon">🎯</span>
+                <div>
+                    <div class="status-value"><span id="currentQuestion">1</span>/10</div>
+                    <div class="status-label">进度</div>
+                </div>
+            </div>
+            <div class="status-item">
+                <span class="status-icon">⭐</span>
+                <div>
+                    <div class="status-value" id="currentScore">0</div>
+                    <div class="status-label">得分</div>
+                </div>
+            </div>
+            <div class="status-item">
+                <span class="status-icon">✅</span>
+                <div>
+                    <div class="status-value" id="correctCount">0</div>
+                    <div class="status-label">正确</div>
+                </div>
+            </div>
+            <div class="timer" id="timer">30:00</div>
+        </div>
+
+        <div class="start-screen" id="startScreen">
+            <div class=\"castle-emoji\">🎯</div>
+            <h1>While循环大挑战</h1>
+            <p class="subtitle">第2套试卷 - 快速挑战30分钟！</p>
+            <div class="student-select">
+                <h3>🎮 选择你的身份</h3>
+                <div class="student-grid">
+                    <button class="student-btn" onclick="selectStudent(this,'凡凡')">凡凡</button>
+                    <button class="student-btn" onclick="selectStudent(this,'QQ')">QQ</button>
+                    <button class="student-btn" onclick="selectStudent(this,'小龙')">小龙</button>
+                    <button class="student-btn" onclick="selectStudent(this,'俊俊')">俊俊</button>
+                    <button class="student-btn" onclick="selectStudent(this,'宇腾')">宇腾</button>
+                    <button class="student-btn" onclick="selectStudent(this,'小紫')">小紫</button>
+                    <button class="student-btn" onclick="selectStudent(this,'艺闻')">艺闻</button>
+                    <button class="student-btn" onclick="selectStudent(this,'神秘挑战者')">神秘挑战者</button>
+                </div>
+            </div>
+            <div style="margin:25px 0;color:var(--light);font-size:1.1em;">
+                <p>📝 <strong>10道题</strong> | ⏱️ <strong>30分钟</strong> | 🏆 <strong>满分100分</strong></p>
+            </div>
+            <button class="start-btn" id="startBtn" onclick="startQuiz()" disabled>🚀 开始挑战！</button>
+        </div>
+
+        <div class="progress-nav" id="progressNav" style="display:none;"></div>
+        <div id="quizContainer"></div>
+
+        <div class="result-screen" id="resultScreen">
+            <div class="result-trophy" id="resultTrophy">🏆</div>
+            <div class="result-title">挑战完成！</div>
+            <div class="result-score" id="resultScore">0</div>
+            <div class="result-rank" id="resultRank">循环新手</div>
+            <div class="result-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="statCorrect">0</div>
+                    <div class="stat-label">正确题数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statAccuracy">0%</div>
+                    <div class="stat-label">正确率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statTime">0:00</div>
+                    <div class="stat-label">用时</div>
+                </div>
+            </div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="restart-btn" onclick="restartQuiz()">🔄 再来一次</button>
+            <div class="leaderboard" id="leaderboard">
+                <h3>🏅 排行榜</h3>
+                <div id="leaderboardList"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const questions = [
+    {
+        type: 'choice',
+        points: 10,
+        question: '下面代码会输出什么？',
+        code: '<span class="kw">int</span> i = <span class="num">3</span>;\n<span class="kw">while</span> (i <= <span class="num">7</span>) {\n    cout << i << <span class="str">" "</span>;\n    i++;\n}',
+        options: ['3 4 5 6', '3 4 5 6 7', '3 4 5 6 7 8', '4 5 6 7'],
+        answer: 1,
+        explanation: '循环5次！i从3到7，输出3 4 5 6 7，当i变成8时退出。'
+    },
+    {
+        type: 'truefalse',
+        points: 10,
+        question: 'while循环必须先判断条件，条件为真才执行循环体。',
+        answer: true,
+        explanation: '正确！while是"先判断，后执行"。每次循环前先检查条件。'
+    },
+    {
+        type: 'fill',
+        points: 10,
+        question: '补全代码，使其输出：2 4 6 8 10',
+        code: '<span class="kw">int</span> i = <span class="num">2</span>;\n<span class="kw">while</span> (i <= <span class="num">10</span>) {\n    cout << i << <span class="str">" "</span>;\n    <span class="blank">???</span>\n}',
+        answer: ['i = i + 2;', 'i=i+2;', 'i += 2;', 'i+=2;', 'i = i + 2', 'i += 2'],
+        placeholder: '输入更新语句',
+        explanation: 'i = i + 2 或 i += 2，每次增加2，输出偶数。'
+    },
+    {
+        type: 'choice',
+        points: 10,
+        question: '这段代码输出什么？',
+        code: '<span class="kw">int</span> n = <span class="num">5</span>;\n<span class="kw">int</span> sum = <span class="num">0</span>;\n<span class="kw">while</span> (n > <span class="num">0</span>) {\n    sum = sum + n;\n    n--;\n}\ncout << sum;',
+        options: ['10', '15', '20', '5'],
+        answer: 1,
+        explanation: 'sum累加：0+5+4+3+2+1=15'
+    },
+    {
+        type: 'choice',
+        points: 10,
+        question: '这段代码会循环几次？',
+        code: '<span class="kw">int</span> x = <span class="num">20</span>;\n<span class="kw">while</span> (x > <span class="num">10</span>) {\n    cout << x << <span class="str">" "</span>;\n    x = x - <span class="num">3</span>;\n}',
+        options: ['2次', '3次', '4次', '5次'],
+        answer: 2,
+        explanation: 'x变化：20→17→14→11。输出20 17 14，当x=11时退出，共4次。'
+    },
+    {
+        type: 'fill',
+        points: 10,
+        question: '计算1到5的乘积，填写累乘语句：',
+        code: '<span class="kw">int</span> product = <span class="num">1</span>;\n<span class="kw">int</span> i = <span class="num">1</span>;\n<span class="kw">while</span> (i <= <span class="num">5</span>) {\n    <span class="blank">???</span>\n    i++;\n}\n<span class="cmt">// product = 120</span>',
+        answer: ['product = product * i;', 'product=product*i;', 'product *= i;', 'product*=i;', 'product = product * i', 'product *= i'],
+        placeholder: '输入累乘语句',
+        explanation: 'product = product * i 或 product *= i，把i累乘到product上。'
+    },
+    {
+        type: 'choice',
+        points: 10,
+        question: '这段代码输出什么？',
+        code: '<span class="kw">int</span> i = <span class="num">1</span>;\n<span class="kw">while</span> (i < <span class="num">6</span>) {\n    <span class="kw">if</span> (i % <span class="num">2</span> == <span class="num">0</span>) {\n        cout << i << <span class="str">" "</span>;\n    }\n    i++;\n}',
+        options: ['1 3 5', '2 4', '1 2 3 4 5', '2 4 6'],
+        answer: 1,
+        explanation: '只输出偶数！i从1到5，只有2和4是偶数，输出2 4'
+    },
+    {
+        type: 'truefalse',
+        points: 10,
+        question: 'break语句可以立即跳出while循环。',
+        answer: true,
+        explanation: '正确！break会立即终止循环，跳到循环后的代码。'
+    },
+    {
+        type: 'fill',
+        points: 10,
+        question: '跳过能被3整除的数，填写关键字：',
+        code: '<span class="kw">int</span> i = <span class="num">1</span>;\n<span class="kw">while</span> (i <= <span class="num">10</span>) {\n    <span class="kw">if</span> (i % <span class="num">3</span> == <span class="num">0</span>) {\n        i++;\n        <span class="blank">???</span>;\n    }\n    cout << i << <span class="str">" "</span>;\n    i++;\n}',
+        answer: ['continue'],
+        placeholder: '输入关键字',
+        explanation: 'continue会跳过本次循环剩余代码，继续下一次循环！'
+    },
+    {
+        type: 'choice',
+        points: 10,
+        question: '这段代码输出什么？',
+        code: '<span class="kw">int</span> count = <span class="num">0</span>;\n<span class="kw">int</span> i = <span class="num">1</span>;\n<span class="kw">while</span> (i <= <span class="num">20</span>) {\n    <span class="kw">if</span> (i % <span class="num">5</span> == <span class="num">0</span>) {\n        count++;\n    }\n    i++;\n}\ncout << count;',
+        options: ['3', '4', '5', '20'],
+        answer: 1,
+        explanation: '统计1到20中能被5整除的数：5,10,15,20，共4个。'
+    }
+];
+
+let currentStudent = '';
+let currentQuestionIndex = 0;
+let score = 0;
+let correctCount = 0;
+let answered = new Array(questions.length).fill(false);
+let answers = new Array(questions.length).fill(null);
+let startTime = null;
+let timerInterval = null;
+let selectedOption = {};
+let selectedTF = {};
+let leaderboard = JSON.parse(localStorage.getItem('whileQuiz2Leaderboard') || '[]');
+
+function generateStars() {
+    const c = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.width = Math.random() * 3 + 1 + 'px';
+        s.style.height = s.style.width;
+        s.style.animationDelay = Math.random() * 2 + 's';
+        c.appendChild(s);
+    }
+}
+
+function selectStudent(btn, name) {
+    document.querySelectorAll('.student-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentStudent = name;
+    document.getElementById('startBtn').disabled = false;
+}
+
+function startQuiz() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('statusBar').style.display = 'flex';
+    document.getElementById('progressNav').style.display = 'flex';
+    document.getElementById('currentStudent').textContent = currentStudent;
+    startTime = new Date();
+    startTimer();
+    generateProgressNav();
+    renderQuestion(0);
+}
+
+function startTimer() {
+    let total = 30 * 60;
+    timerInterval = setInterval(() => {
+        total--;
+        if (total <= 0) { clearInterval(timerInterval); endQuiz(); return; }
+        const m = Math.floor(total / 60);
+        const s = total % 60;
+        document.getElementById('timer').textContent = m + ':' + String(s).padStart(2, '0');
+    }, 1000);
+}
+
+function generateProgressNav() {
+    const nav = document.getElementById('progressNav');
+    nav.innerHTML = '';
+    for (let i = 0; i < questions.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot' + (i === 0 ? ' active' : '');
+        dot.textContent = i + 1;
+        dot.onclick = () => { if (answered[i] || i === currentQuestionIndex) goToQuestion(i); };
+        nav.appendChild(dot);
+    }
+}
+
+function updateProgressNav() {
+    document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+        dot.classList.remove('active');
+        if (i === currentQuestionIndex) dot.classList.add('active');
+        if (answered[i]) dot.classList.add(answers[i].correct ? 'completed' : 'wrong');
+    });
+}
+
+function goToQuestion(index) {
+    currentQuestionIndex = index;
+    renderQuestion(index);
+    updateProgressNav();
+    document.getElementById('currentQuestion').textContent = index + 1;
+}
+
+function renderQuestion(index) {
+    const q = questions[index];
+    const typeNames = { choice: '选择题', fill: '填空题', truefalse: '判断题' };
+    let html = '<div class="quiz-section active">';
+    html += '<div class="question-header">';
+    html += '<span class="question-type">' + typeNames[q.type] + '</span>';
+    html += '<span class="question-points">+' + q.points + '分</span>';
+    html += '</div>';
+    html += '<div class="question-title"><span class="question-number">第' + (index+1) + '题：</span>' + q.question + '</div>';
+    if (q.code) html += '<div class="code-block"><pre>' + q.code + '</pre></div>';
+
+    if (q.type === 'choice') {
+        const letters = ['A', 'B', 'C', 'D'];
+        html += '<div class="options-grid">';
+        q.options.forEach((opt, i) => {
+            html += '<button class="option-btn" id="opt' + index + '_' + i + '" onclick="selectOpt(' + index + ',' + i + ')">';
+            html += '<span class="option-letter">' + letters[i] + '</span><span>' + opt + '</span></button>';
+        });
+        html += '</div>';
+    } else if (q.type === 'fill') {
+        html += '<div><input type="text" class="fill-input" id="fillInput' + index + '" placeholder="' + (q.placeholder || '请输入答案') + '" onkeypress="if(event.key===\'Enter\')submitAnswer(' + index + ')"></div>';
+    } else if (q.type === 'truefalse') {
+        html += '<div class="true-false-btns">';
+        html += '<button class="tf-btn true" id="tfTrue' + index + '" onclick="selectTF(' + index + ',true)">✅ 正确</button>';
+        html += '<button class="tf-btn false" id="tfFalse' + index + '" onclick="selectTF(' + index + ',false)">❌ 错误</button>';
+        html += '</div>';
+    }
+
+    html += '<div class="explanation" id="exp' + index + '"><div class="explanation-title"><span id="expIcon' + index + '">💡</span> <span id="expTitle' + index + '">解析</span></div><div>' + q.explanation + '</div></div>';
+    html += '<div class="btn-group"><button class="submit-btn" id="subBtn' + index + '" onclick="submitAnswer(' + index + ')">✅ 提交答案</button>';
+    html += '<button class="next-btn" id="nextBtn' + index + '" onclick="nextQuestion()">' + (index < questions.length - 1 ? '➡️ 下一题' : '🏆 查看结果') + '</button></div>';
+    html += '</div>';
+    document.getElementById('quizContainer').innerHTML = html;
+    if (answered[index]) restoreState(index);
+}
+
+function selectOpt(qIdx, optIdx) {
+    if (answered[qIdx]) return;
+    document.querySelectorAll('[id^="opt' + qIdx + '_"]').forEach(b => b.classList.remove('selected'));
+    document.getElementById('opt' + qIdx + '_' + optIdx).classList.add('selected');
+    selectedOption[qIdx] = optIdx;
+}
+
+function selectTF(qIdx, val) {
+    if (answered[qIdx]) return;
+    document.getElementById('tfTrue' + qIdx).classList.remove('selected');
+    document.getElementById('tfFalse' + qIdx).classList.remove('selected');
+    document.getElementById(val ? 'tfTrue' + qIdx : 'tfFalse' + qIdx).classList.add('selected');
+    selectedTF[qIdx] = val;
+}
+
+function submitAnswer(index) {
+    if (answered[index]) return;
+    const q = questions[index];
+    let userAns, isCorrect = false;
+
+    if (q.type === 'choice') {
+        userAns = selectedOption[index];
+        if (userAns === undefined) { alert('请先选择答案！'); return; }
+        isCorrect = userAns === q.answer;
+        document.querySelectorAll('[id^="opt' + index + '_"]').forEach((b, i) => {
+            b.disabled = true;
+            if (i === q.answer) b.classList.add('correct');
+            else if (i === userAns && !isCorrect) b.classList.add('wrong');
+        });
+    } else if (q.type === 'fill') {
+        const inp = document.getElementById('fillInput' + index);
+        userAns = inp.value.trim().replace(/\s+/g, '');
+        if (!userAns) { alert('请输入答案！'); return; }
+        isCorrect = q.answer.some(a => userAns.toLowerCase() === a.toLowerCase().replace(/\s+/g, ''));
+        inp.classList.add(isCorrect ? 'correct' : 'wrong');
+        inp.disabled = true;
+    } else if (q.type === 'truefalse') {
+        userAns = selectedTF[index];
+        if (userAns === undefined) { alert('请选择正确或错误！'); return; }
+        isCorrect = userAns === q.answer;
+        document.getElementById('tfTrue' + index).disabled = true;
+        document.getElementById('tfFalse' + index).disabled = true;
+    }
+
+    answered[index] = true;
+    answers[index] = { answer: userAns, correct: isCorrect };
+    if (isCorrect) { score += q.points; correctCount++; showPopup('+' + q.points, true); }
+    else { showPopup('答错了', false); }
+
+    document.getElementById('currentScore').textContent = score;
+    document.getElementById('correctCount').textContent = correctCount;
+
+    const exp = document.getElementById('exp' + index);
+    const icon = document.getElementById('expIcon' + index);
+    const title = document.getElementById('expTitle' + index);
+    if (isCorrect) { icon.textContent = '🎉'; title.textContent = '回答正确！'; }
+    else { exp.classList.add('wrong'); icon.textContent = '😅'; title.textContent = '答错了'; }
+    exp.classList.add('show');
+
+    document.getElementById('subBtn' + index).disabled = true;
+    document.getElementById('nextBtn' + index).classList.add('show');
+    updateProgressNav();
+}
+
+function showPopup(text, positive) {
+    const p = document.createElement('div');
+    p.className = 'score-popup';
+    p.textContent = text;
+    p.style.left = '50%';
+    p.style.top = '35%';
+    p.style.transform = 'translateX(-50%)';
+    p.style.color = positive ? 'var(--gold)' : 'var(--danger)';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+}
+
+function nextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+        updateProgressNav();
+        document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        endQuiz();
+    }
+}
+
+function restoreState(index) {
+    const q = questions[index];
+    const ans = answers[index];
+    if (q.type === 'choice') {
+        document.querySelectorAll('[id^="opt' + index + '_"]').forEach((b, i) => {
+            b.disabled = true;
+            if (i === q.answer) b.classList.add('correct');
+            else if (i === ans.answer && !ans.correct) b.classList.add('wrong');
+        });
+    } else if (q.type === 'fill') {
+        const inp = document.getElementById('fillInput' + index);
+        inp.value = ans.answer;
+        inp.classList.add(ans.correct ? 'correct' : 'wrong');
+        inp.disabled = true;
+    } else if (q.type === 'truefalse') {
+        document.getElementById('tfTrue' + index).disabled = true;
+        document.getElementById('tfFalse' + index).disabled = true;
+        document.getElementById(ans.answer ? 'tfTrue' + index : 'tfFalse' + index).classList.add('selected');
+    }
+    const exp = document.getElementById('exp' + index);
+    const icon = document.getElementById('expIcon' + index);
+    const title = document.getElementById('expTitle' + index);
+    if (ans.correct) { icon.textContent = '🎉'; title.textContent = '回答正确！'; }
+    else { exp.classList.add('wrong'); icon.textContent = '😅'; title.textContent = '答错了'; }
+    exp.classList.add('show');
+    document.getElementById('subBtn' + index).disabled = true;
+    document.getElementById('nextBtn' + index).classList.add('show');
+}
+
+function endQuiz() {
+    clearInterval(timerInterval);
+    const endTime = new Date();
+    const timeTaken = Math.floor((endTime - startTime) / 1000);
+    const m = Math.floor(timeTaken / 60);
+    const s = timeTaken % 60;
+    const total = questions.reduce((sum, q) => sum + q.points, 0);
+    const acc = Math.round((correctCount / questions.length) * 100);
+
+    let rank, rankClass, trophy, msg;
+    if (score >= total * 0.95) { rank = '循环大师 👑'; rankClass = 'rank-gold'; trophy = '🏆'; msg = currentStudent + '太厉害了！完全掌握了while循环！'; }
+    else if (score >= total * 0.8) { rank = '循环高手 🥇'; rankClass = 'rank-gold'; trophy = '🥇'; msg = currentStudent + '表现出色！继续加油！'; }
+    else if (score >= total * 0.6) { rank = '循环能手 🥈'; rankClass = 'rank-silver'; trophy = '🥈'; msg = currentStudent + '做得不错！再多练习！'; }
+    else if (score >= total * 0.4) { rank = '循环学徒 🥉'; rankClass = 'rank-bronze'; trophy = '🥉'; msg = currentStudent + '继续努力！'; }
+    else { rank = '循环新手 🌱'; rankClass = 'rank-normal'; trophy = '🌱'; msg = currentStudent + '别灰心，多复习课件！'; }
+
+    leaderboard.push({ name: currentStudent, score: score, accuracy: acc, time: m + ':' + String(s).padStart(2, '0') });
+    leaderboard.sort((a, b) => b.score - a.score);
+    leaderboard = leaderboard.slice(0, 10);
+    localStorage.setItem('whileQuiz2Leaderboard', JSON.stringify(leaderboard));
+
+    document.getElementById('quizContainer').innerHTML = '';
+    document.getElementById('statusBar').style.display = 'none';
+    document.getElementById('progressNav').style.display = 'none';
+    document.getElementById('resultTrophy').textContent = trophy;
+    document.getElementById('resultScore').textContent = score + '分';
+    document.getElementById('resultRank').textContent = rank;
+    document.getElementById('resultRank').className = 'result-rank ' + rankClass;
+    document.getElementById('statCorrect').textContent = correctCount + '/' + questions.length;
+    document.getElementById('statAccuracy').textContent = acc + '%';
+    document.getElementById('statTime').textContent = m + ':' + String(s).padStart(2, '0');
+    document.getElementById('resultMessage').textContent = msg;
+    renderLeaderboard();
+    document.getElementById('resultScreen').classList.add('active');
+    if (score >= total * 0.8) launchConfetti();
+}
+
+function renderLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    list.innerHTML = '';
+    leaderboard.forEach((item, i) => {
+        const rc = i === 0 ? 'gold' : (i === 1 ? 'silver' : (i === 2 ? 'bronze' : ''));
+        const ri = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : (i + 1)));
+        list.innerHTML += '<div class="leaderboard-item"><div class="leaderboard-rank ' + rc + '">' + ri + '</div><div class="leaderboard-name">' + item.name + '</div><div class="leaderboard-score">' + item.score + '分</div></div>';
+    });
+}
+
+function launchConfetti() {
+    const colors = ['#FFD700', '#FF6B9D', '#00CEC9', '#6C5CE7', '#FD79A8'];
+    for (let i = 0; i < 80; i++) {
+        setTimeout(() => {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.top = '-10px';
+            c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            c.style.width = Math.random() * 8 + 4 + 'px';
+            c.style.height = c.style.width;
+            document.body.appendChild(c);
+            let y = -10, x = parseFloat(c.style.left), sy = Math.random() * 3 + 2, sx = (Math.random() - 0.5) * 3;
+            const fall = setInterval(() => {
+                y += sy; x += sx;
+                c.style.top = y + 'px';
+                c.style.left = x + 'vw';
+                if (y > window.innerHeight) { clearInterval(fall); c.remove(); }
+            }, 20);
+        }, i * 25);
+    }
+}
+
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    correctCount = 0;
+    answered = new Array(questions.length).fill(false);
+    answers = new Array(questions.length).fill(null);
+    selectedOption = {};
+    selectedTF = {};
+    document.getElementById('resultScreen').classList.remove('active');
+    document.getElementById('startScreen').style.display = 'block';
+    document.querySelectorAll('.student-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('startBtn').disabled = true;
+    currentStudent = '';
+}
+
+window.onload = generateStars;
+</script>
+</body>
+</html>
